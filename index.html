@@ -2,11 +2,18 @@
 <head>
   <title>ZOMB</title>
 
-  <style>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <style type="text/css">
     body {
 	  font-size: 1.5em;
 	  font-family: sans-serif;
 	  color: #aaa;
+	}
+
+	form {
+	  margin: 0;
+	  padding: 0;
 	}
 
 	input {
@@ -15,9 +22,23 @@
 	  width: 100%;
 	}
   </style>
+
+  <script lang="javascript">
+    $(document).ready(function() {
+		$("#queryForm").on("submit", function() {
+			$("<div>").text($("#q").val()).prependTo($("#r"));
+			return false;
+		});
+	});
+  </script>
+
 </head>
 <body>
-  <div><input type="text" id="q"/></div>
+  <div>
+    <form id="queryForm">
+      <input type="text" id="q"/>
+    </form>
+  </div>
   <div id="r">
     <!-- responses go here -->
   </div>
