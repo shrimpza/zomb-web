@@ -6,30 +6,49 @@
 
   <style type="text/css">
     body {
-	  font-size: 1.5em;
-	  font-family: sans-serif;
-	  color: #aaa;
-	}
+    font-size: 1.5em;
+    font-family: sans-serif;
+    color: #aaa;
+  }
 
-	form {
-	  margin: 0;
-	  padding: 0;
-	}
+  form {
+    margin: 0;
+    padding: 0;
+  }
 
-	input {
-	  font-size: 1em;
-	  color: black;
-	  width: 100%;
-	}
+  input {
+    font-size: 1em;
+    color: black;
+    width: 100%;
+  }
   </style>
 
   <script lang="javascript">
     $(document).ready(function() {
-		$("#queryForm").on("submit", function() {
-			$("<div>").text($("#q").val()).prependTo($("#r"));
-			return false;
-		});
-	});
+      $("#queryForm").on("submit", function() {
+        var query = {
+          key: "123",
+          user: "user",
+          query: $("#q").val()
+        };
+
+        $.ajax({
+          crossDomain: true,
+          type: "POST",
+          url: "http://127.0.0.1:8080/",
+          dataType: "json",
+          data: query
+        }).done(function(json) {
+          $("#r").prepend($("<div>").text(json))
+        }).fail(function(r, e, m) {
+          console.log(m);
+          $("#r").prepend($("<div>").text("Error: " + e));
+        });
+        return false;
+      });
+
+      $("#q").focus();
+    });
   </script>
 
 </head>
