@@ -8,7 +8,7 @@
     body {
     font-size: 1.5em;
     font-family: sans-serif;
-    color: #aaa;
+    color: #bbb;
   }
 
   form {
@@ -21,25 +21,42 @@
     color: black;
     width: 100%;
   }
+
+  .query {
+    font-size: 0.6em;
+    color: #aaa;
+  }
+
+  .response {
+  }
   </style>
 
   <script lang="javascript">
+    var apiUrl = "http://127.0.0.1:8080/";
+    var apiKey = "abc123";
+    var apiUser = "user";
+
     $(document).ready(function() {
       $("#queryForm").on("submit", function() {
         var query = {
-          key: "123",
-          user: "user",
+          key: apiKey,
+          user: apiUser,
           query: $("#q").val()
         };
 
         $.ajax({
           crossDomain: true,
           type: "POST",
-          url: "http://127.0.0.1:8080/",
+          url: apiUrl,
           dataType: "json",
           data: JSON.stringify(query)
         }).done(function(json) {
-          $("#r").prepend($("<div>").text(json))
+
+          $("#r").prepend(
+            $("<div>")
+              .append($("<div>").attr("class", "query").text(query.query))
+              .append($("<div>").attr("class", "output").text(json.response.join("<br/>")))
+          );
         }).fail(function(r, e, m) {
           console.log(r);
           console.log(e);
