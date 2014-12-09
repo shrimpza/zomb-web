@@ -8,7 +8,7 @@
     body {
     font-size: 1.5em;
     font-family: sans-serif;
-    color: #bbb;
+    color: #444;
   }
 
   form {
@@ -24,7 +24,7 @@
 
   .query {
     font-size: 0.6em;
-    color: #aaa;
+    color: #999;
   }
 
   .response {
@@ -50,14 +50,9 @@
           url: apiUrl,
           dataType: "json",
           data: JSON.stringify(query)
-        }).done(function(json) {
-
-          $("#r").prepend(
-            $("<div>")
-              .append($("<div>").attr("class", "query").text(query.query))
-              .append($("<div>").attr("class", "output").text(json.response.join("<br/>")))
-          );
-        }).fail(function(r, e, m) {
+        })
+        .done(response)
+        .fail(function(r, e, m) {
           console.log(r);
           console.log(e);
           console.log(m);
@@ -68,6 +63,14 @@
 
       $("#q").focus();
     });
+
+    function response(json) {
+      $("#r").prepend(
+        $("<div>")
+          .append($("<div>").attr("class", "query").text(json.query))
+          .append($("<div>").attr("class", "output").text(json.response.join("<br/>")))
+      );
+    }
   </script>
 
 </head>
