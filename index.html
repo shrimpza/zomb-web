@@ -37,10 +37,12 @@
           type: "POST",
           url: "http://127.0.0.1:8080/",
           dataType: "json",
-          data: query
+          data: JSON.stringify(query)
         }).done(function(json) {
           $("#r").prepend($("<div>").text(json))
         }).fail(function(r, e, m) {
+          console.log(r);
+          console.log(e);
           console.log(m);
           $("#r").prepend($("<div>").text("Error: " + e));
         });
