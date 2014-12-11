@@ -8,7 +8,7 @@
     body {
     font-size: 1.5em;
     font-family: sans-serif;
-    color: #444;
+    color: gray;
   }
 
   form {
@@ -22,12 +22,25 @@
     width: 100%;
   }
 
-  .query {
-    font-size: 0.6em;
-    color: #999;
+  .result {
+    padding: 5px 0;
+    border-bottom: 1px dashed silver;
   }
 
-  .response {
+  .result .query {
+    font-size: 0.6em;
+    color: silver;
+  }
+
+  .result .response {
+  }
+
+  .result .response-image {
+    height: 50px;
+    max-height: 50px;
+    max-width: 50px;
+    float: left;
+    margin: 0 5px;
   }
   </style>
 
@@ -56,7 +69,7 @@
           console.log(r);
           console.log(e);
           console.log(m);
-          $("#r").prepend($("<div>").text("Error: " + e));
+          errorResponse(query.query, 'Error: ' + m);
         });
         return false;
       });
@@ -65,10 +78,21 @@
     });
 
     function response(json) {
+      if (json.image == null || json.image == '') json.image = 'blank.png';
       $("#r").prepend(
-        $("<div>")
+        $("<div>").attr("class", "result")
+          .append($("<img>").attr("class", "response-image").attr('src', json.image))
           .append($("<div>").attr("class", "query").text(json.query))
           .append($("<div>").attr("class", "output").text(json.response.join("<br/>")))
+      );
+    }
+
+    function errorResponse(query, error) {
+      $("#r").prepend(
+        $("<div>").attr("class", "result")
+          .append($("<img>").attr("class", "response-image").attr('src', 'blank'))
+          .append($("<div>").attr("class", "query").text(query))
+          .append($("<div>").attr("class", "output").text(error))
       );
     }
   </script>
