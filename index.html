@@ -30,9 +30,11 @@
   .result .query {
     font-size: 0.6em;
     color: silver;
+    margin-left: 60px;
   }
 
   .result .response {
+    margin-left: 60px;
   }
 
   .result .response-image {
@@ -83,7 +85,7 @@
         $("<div>").attr("class", "result")
           .append($("<img>").attr("class", "response-image").attr('src', json.image))
           .append($("<div>").attr("class", "query").text(json.query))
-          .append($("<div>").attr("class", "output").text(json.response.join("<br/>")))
+          .append($("<div>").attr("class", "response").text(json.response.join("<br/>")))
       );
     }
 
@@ -92,7 +94,7 @@
         $("<div>").attr("class", "result")
           .append($("<img>").attr("class", "response-image").attr('src', 'blank'))
           .append($("<div>").attr("class", "query").text(query))
-          .append($("<div>").attr("class", "output").text(error))
+          .append($("<div>").attr("class", "response").text(error))
       );
     }
   </script>
