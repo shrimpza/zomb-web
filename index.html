@@ -1,0 +1,113 @@
+<html>
+<head>
+  <title>ZOMB</title>
+
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <style type="text/css">
+    body {
+    font-size: 1.5em;
+    font-family: sans-serif;
+    color: gray;
+  }
+
+  form {
+    margin: 0;
+    padding: 0;
+  }
+
+  input {
+    font-size: 1em;
+    color: black;
+    width: 100%;
+  }
+
+  .result {
+    padding: 5px 0;
+    border-bottom: 1px dashed silver;
+  }
+
+  .result .query {
+    font-size: 0.6em;
+    color: silver;
+    margin-left: 60px;
+  }
+
+  .result .response {
+    margin-left: 60px;
+  }
+
+  .result .response-image {
+    height: 50px;
+    max-height: 50px;
+    max-width: 50px;
+    float: left;
+    margin: 0 5px;
+  }
+  </style>
+
+  <script lang="javascript">
+    var apiUrl = "http://127.0.0.1:8080/";
+    var apiKey = "abc123";
+    var apiUser = "user";
+
+    $(document).ready(function() {
+      $("#queryForm").on("submit", function() {
+        var query = {
+          key: apiKey,
+          user: apiUser,
+          query: $("#q").val()
+        };
+
+        $.ajax({
+          crossDomain: true,
+          type: "POST",
+          url: apiUrl,
+          dataType: "json",
+          data: JSON.stringify(query)
+        })
+        .done(response)
+        .fail(function(r, e, m) {
+          console.log(r);
+          console.log(e);
+          console.log(m);
+          errorResponse(query.query, 'Error: ' + m);
+        });
+        return false;
+      });
+
+      $("#q").focus();
+    });
+
+    function response(json) {
+      if (json.image == null || json.image == '') json.image = 'blank.png';
+      $("#r").prepend(
+        $("<div>").attr("class", "result")
+          .append($("<img>").attr("class", "response-image").attr('src', json.image))
+          .append($("<div>").attr("class", "query").text(json.query))
+          .append($("<div>").attr("class", "response").text(json.response.join("<br/>")))
+      );
+    }
+
+    function errorResponse(query, error) {
+      $("#r").prepend(
+        $("<div>").attr("class", "result")
+          .append($("<img>").attr("class", "response-image").attr('src', 'blank'))
+          .append($("<div>").attr("class", "query").text(query))
+          .append($("<div>").attr("class", "response").text(error))
+      );
+    }
+  </script>
+
+</head>
+<body>
+  <div>
+    <form id="queryForm">
+      <input type="text" id="q"/>
+    </form>
+  </div>
+  <div id="r">
+    <!-- responses go here -->
+  </div>
+</body>
+</html>
