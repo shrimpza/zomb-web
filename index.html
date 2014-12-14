@@ -81,21 +81,21 @@
 
     function response(json) {
       if (json.image == null || json.image == '') json.image = 'blank.png';
-      $("#r").prepend(
-        $("<div>").attr("class", "result")
+      var newRes = $("<div>").attr("class", "result")
           .append($("<img>").attr("class", "response-image").attr('src', json.image))
           .append($("<div>").attr("class", "query").text(json.query))
           .append($("<div>").attr("class", "response").text(json.response.join("<br/>")))
-      );
+          .css("display", "none");
+      $("#r").prepend(newRes);
+      newRes.show(350);
     }
 
     function errorResponse(query, error) {
-      $("#r").prepend(
-        $("<div>").attr("class", "result")
-          .append($("<img>").attr("class", "response-image").attr('src', 'blank'))
-          .append($("<div>").attr("class", "query").text(query))
-          .append($("<div>").attr("class", "response").text(error))
-      );
+      response({
+          "image": "",
+          "query": query,
+          "response": [error]
+      });
     }
   </script>
 
