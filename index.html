@@ -2,53 +2,13 @@
 <head>
   <title>ZOMB</title>
 
+  <link rel="stylesheet" type="text/css" media="all" href="style.css" />
+
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-  <style type="text/css">
-    body {
-    font-size: 1.5em;
-    font-family: sans-serif;
-    color: gray;
-  }
-
-  form {
-    margin: 0;
-    padding: 0;
-  }
-
-  input {
-    font-size: 1em;
-    color: black;
-    width: 100%;
-  }
-
-  .result {
-    padding: 5px 0;
-    border-bottom: 1px dashed silver;
-  }
-
-  .result .query {
-    font-size: 0.6em;
-    color: silver;
-    margin-left: 60px;
-  }
-
-  .result .response {
-    margin-left: 60px;
-  }
-
-  .result .response-image {
-    height: 50px;
-    max-height: 50px;
-    max-width: 50px;
-    float: left;
-    margin: 0 5px;
-  }
-  </style>
-
   <script lang="javascript">
-    var apiUrl = "http://127.0.0.1:8080/";
-    var apiKey = "abc123";
+    var apiUrl = "http://tools.shrimpworks.za.net/zomb/";
+    var apiKey = "";
     var apiUser = "user";
 
     $(document).ready(function() {
@@ -58,6 +18,11 @@
           user: apiUser,
           query: $("#q").val()
         };
+
+        $("#q").attr('readonly', true);
+        $("#l").attr('src', 'load.gif');
+
+        var startTime = Date.now();
 
         $.ajax({
           crossDomain: true,
@@ -80,31 +45,37 @@
     });
 
     function response(json) {
+      $("#q").attr('readonly', false).val('');
+      $("#l").attr('src', 'blank.png');
+
       if (json.image == null || json.image == '') json.image = 'blank.png';
-      $("#r").prepend(
-        $("<div>").attr("class", "result")
+      var newRes = $("<div>").attr("class", "result")
           .append($("<img>").attr("class", "response-image").attr('src', json.image))
           .append($("<div>").attr("class", "query").text(json.query))
           .append($("<div>").attr("class", "response").text(json.response.join("<br/>")))
-      );
+          .css("display", "none");
+      $("#r").prepend(newRes);
+      newRes.show(350);
     }
 
     function errorResponse(query, error) {
-      $("#r").prepend(
-        $("<div>").attr("class", "result")
-          .append($("<img>").attr("class", "response-image").attr('src', 'blank'))
-          .append($("<div>").attr("class", "query").text(query))
-          .append($("<div>").attr("class", "response").text(error))
-      );
+      response({
+          "image": "",
+          "query": query,
+          "response": [error]
+      });
     }
   </script>
 
 </head>
 <body>
-  <div>
-    <form id="queryForm">
-      <input type="text" id="q"/>
-    </form>
+  <div class="query-form">
+    <img class="query-image" id="l" src="blank.png" />
+    <div class="query-input">
+      <form id="queryForm">
+        <input type="text" id="q" placeholder="enter a command" />
+      </form>
+    </div>
   </div>
   <div id="r">
     <!-- responses go here -->
