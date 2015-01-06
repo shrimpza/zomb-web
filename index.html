@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>ZOMB</title>
@@ -11,18 +12,43 @@
     var apiKey = "";
     var apiUser = "user";
 
+    var queryHistory = localStorage.getItem('queryHistory') != null 
+                        ? JSON.parse(localStorage.getItem('queryHistory')) : [];
+
     $(document).ready(function() {
+      $("#q").keypress(function(event) {
+
+        // on up/down press, navigate through query history
+        var histIdx;
+        if (event.key == 'ArrowUp' || event.key == 'Up') {
+          histIdx = Math.max(0, $("#q").data('history-index') - 1);
+          $("#q").val(queryHistory[histIdx]).data('history-index', histIdx);
+          return false;
+        } else if (event.key == 'ArrowDown' || event.key == 'Down') {
+          histIdx = Math.min(queryHistory.length, $("#q").data('history-index') + 1);
+          $("#q").val(queryHistory[histIdx]).data('history-index', histIdx);
+          return false;
+        }
+
+        return true;
+      });
+
       $("#queryForm").on("submit", function() {
         var query = {
           key: apiKey,
           user: apiUser,
-          query: $("#q").val()
+          query: $("#q").val().trim()
         };
 
+        if (query.query == '') return false;
+
+        // lock input, show progress spinner
         $("#q").attr('readonly', true);
         $("#l").attr('src', 'load.gif');
 
-        var startTime = Date.now();
+        // query history maintenance
+        queryHistory.push(query.query);
+        if (queryHistory.length > 20) queryHistory.shift();
 
         $.ajax({
           crossDomain: true,
@@ -41,13 +67,18 @@
         return false;
       });
 
-      $("#q").focus();
+      $("#q").data('history-index', queryHistory.length).focus();
     });
 
     function response(json) {
-      $("#q").attr('readonly', false).val('');
+      // unlock and clean input, remove spinner animation
+      $("#q").attr('readonly', false).data('history-index', queryHistory.length).val('');
       $("#l").attr('src', 'blank.png');
 
+      // persist query history
+      localStorage.setItem('queryHistory', JSON.stringify(queryHistory));
+
+      // build elements for response result
       if (json.image == null || json.image == '') json.image = 'blank.png';
       var newRes = $("<div>").attr("class", "result")
           .append($("<img>").attr("class", "response-image").attr('src', json.image))
@@ -55,6 +86,8 @@
           .append($("<div>").attr("class", "response").text(json.response.join("<br/>")))
           .css("display", "none");
       $("#r").prepend(newRes);
+
+      // make it fancy
       newRes.show(350);
     }
 
@@ -72,8 +105,8 @@
   <div class="query-form">
     <img class="query-image" id="l" src="blank.png" />
     <div class="query-input">
-      <form id="queryForm">
-        <input type="text" id="q" placeholder="enter a command" />
+      <form id="queryForm" autocomplete="off">
+        <input type="text" id="q" placeholder="enter a command" data-history-index="0" />
       </form>
     </div>
   </div>
